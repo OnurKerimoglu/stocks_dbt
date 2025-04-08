@@ -21,7 +21,16 @@ etf_tickers_info AS (
  industry,
  market_capitalization,
  overall_risk,
- SAFE_CAST(SPLIT(average_analyst_rating, '-')[OFFSET(0)] AS FLOAT64) AS average_analyst_score
+ CASE 
+  WHEN average_analyst_rating != ''
+  THEN SAFE_CAST(SPLIT(average_analyst_rating, '-')[OFFSET(0)] AS FLOAT64)
+  ELSE NULL
+ END AS average_analyst_score,
+ CASE 
+  WHEN average_analyst_rating != ''
+  THEN SPLIT(average_analyst_rating, '-')[OFFSET(1)]
+  ELSE NULL
+ END AS average_analyst_recommendation
  from stocks_raw.stock_info si
  join holding_weights hw ON hw.symbol = si.symbol
 )
