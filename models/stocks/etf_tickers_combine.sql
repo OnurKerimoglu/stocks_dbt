@@ -1,13 +1,14 @@
 {{ config(
     materialized='table', 
-    alias='etf_' ~ var('etf_symbol') ~ '_tickers'
+    alias='etf_' ~ var('etf_symbol') ~ '_tickers_combined'
     ) 
 }}
 
 WITH holding_weights AS(
   select
   ticker as symbol,
-  weight
+  weight,
+  sector
   from stocks_raw.etfs
   where fund_ticker = '{{ var('etf_symbol') }}'
 ),
@@ -15,8 +16,8 @@ etf_tickers_info AS (
  select
  hw.symbol,
  hw.weight,
+ hw.sector,
  company_name,
- si.sector,
  industry,
  market_capitalization,
  overall_risk,
