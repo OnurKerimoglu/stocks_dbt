@@ -12,7 +12,7 @@ WITH holding_weights AS(
   from stocks_raw.etfs
   where fund_ticker = '{{ var('etf_symbol') }}'
 ),
-etf_tickers_info AS (
+etf_tickers_weights_info AS (
  select
  hw.symbol,
  hw.weight,
@@ -34,5 +34,12 @@ etf_tickers_info AS (
  from stocks_raw.stock_info si
  join holding_weights hw ON hw.symbol = si.symbol
 )
-select *
-from etf_tickers_info
+SELECT 
+wi.*,
+date as last_date,
+close,
+volume,
+bollinger_recommendation,
+percchange
+from stocks_refined_dev.price_technicals_lastday pt  -- todo: dynamic references
+join etf_tickers_weights_info wi ON wi.symbol = pt.symbol
