@@ -8,6 +8,7 @@ WITH holding_weights AS(
   select
   ticker as symbol,
   weight,
+  row_number() OVER (ORDER BY weight DESC, ticker ASC) as weight_rank,
   sector
   from stocks_raw.etfs
   where fund_ticker = '{{ var('etf_symbol') }}'
@@ -16,6 +17,7 @@ etf_tickers_weights_info AS (
  select
  hw.symbol,
  hw.weight,
+ hw.weight_rank,
  hw.sector,
  company_name,
  industry,
@@ -43,3 +45,4 @@ bollinger_recommendation,
 percchange
 from stocks_refined_dev.price_technicals_lastday pt  -- todo: dynamic references
 join etf_tickers_weights_info wi ON wi.symbol = pt.symbol
+order by wi.weight_rank
