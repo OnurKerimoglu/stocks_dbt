@@ -1,0 +1,16 @@
+version: 1
+
+sources:
+  - name: silver
+    database: "{{ target.project }}"
+    schema: "{{ 'stocks_raw_dev' if target.name == 'dev' else 'stocks_raw' }}"
+    tables:
+      - name: stock_forecasts
+        description: "Append-only Silver table with Date, asof, Ticker, Close, Returns."
+        columns:
+          - name: Date
+          - name: asof
+            tests: [not_null]
+          - name: Ticker
+          - name: Close
+          - name: Returns
